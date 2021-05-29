@@ -4,9 +4,9 @@ import os
 
 import redis
 
-app = Flask(__name__)
+import database
 
-redisdb = redis.Redis(host='redis', port=6379, db=0)
+#redisdb = redis.Redis(host='redis', port=6379, db=0)
 
 @app.route('/')
 def index():
