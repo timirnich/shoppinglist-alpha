@@ -16,6 +16,12 @@ def create_app(test_config=None):
         # load the test config if provided
         app.config.update(test_config)
 
-    from shoppinglist-alpha import database
+    from shoppinglist import database
+
+    database.init_app(app)
     
-    app.teardown_appcontext(close_db)
+    from shoppinglist import list
+
+    app.register_blueprint(list.bp)
+
+    return app
