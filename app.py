@@ -7,9 +7,6 @@ app = Flask(__name__, instance_relative_config=True)
 app.config.from_mapping(
     DATABASE=os.path.join(app.instance_path, "shoppinglist.sqlite")
 )
-app.config.from_mapping(
-	TESTING = True
-)
 
 # ensure the instance folder exists
 try:
@@ -24,4 +21,4 @@ from handlers.routes import configure_routes
 configure_routes(app)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
