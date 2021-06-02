@@ -3,45 +3,25 @@ from flask import Flask, redirect, render_template, request
 import os
 
 
-app = Flask(__name__)
+app = Flask(__name__, instance_relative_config=True)
 app.config.from_mapping(
     DATABASE=os.path.join(app.instance_path, "shoppinglist.sqlite")
 )
+app.config.from_mapping(
+	TESTING = True
+)
 
-import database
-database.init_app(app)
+# ensure the instance folder exists
+try:
+	os.makedirs(app.instance_path)
+except OSError:
+	pass
 
-@app.route('/')
-def index():
-	db = database.get_db()
-	shoppinglist = db.execute(
-		"SELECT item"
-		"FROM shoppinglist"
-	).fetchall()
-	return render_template('index.html', shoppinglist_formatted=list(shoppinglist))
+from database.database import init_app
+init_app(app)
 
-@app.route('/addentry', methods=['POST'])
-def add_value():
-	item = request.form['value']
-	print("Received entry " + item + ", adding to shopping list...")
-	db = database.get_db()
-	db.execute(
-		"INSERT INTO shoppinglist (item, quantity) VALUES (?, ?)",
-		(item, 1)
-	)
-	db.commit()
-	return redirect("/", code=302)
-
-@app.route('/removeentry', methods=['POST'])
-def remove_value():
-	item = request.form['value']
-	print("Received entry " + item + ", removing from shopping list...")
-	db = database.get_db()
-	db.execute(
-		"DELETE FROM shoppinglist WHERE item = ?",
-		(item)
-	)
-	return redirect("/", code=302)
+from handlers.routes import configure_routes
+configure_routes(app)
 
 if __name__ == '__main__':
     app.run()
