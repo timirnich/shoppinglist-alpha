@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 from flask import Flask, redirect, render_template, request, jsonify
+=======
+from flask import Flask
+>>>>>>> Stashed changes
 
 import os
 
